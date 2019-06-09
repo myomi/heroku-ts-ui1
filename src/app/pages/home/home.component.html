@@ -1,3 +1,7 @@
-<p>
-  home works!
-</p>
+<nav>
+  <div>
+    <button *ngIf="auth.isAuthenticated()" (click)="auth.logout()">
+      Log Out
+    </button>
+  </div>
+</nav>

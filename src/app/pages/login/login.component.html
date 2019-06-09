@@ -1,3 +1,11 @@
-<p>
-  login works!
-</p>
+<div [formGroup]="form">
+  <label>
+    Email:
+    <input type="text" formControlName="email" />
+  </label>
+  <label>
+    Password:
+    <input type="password" formControlName="password" />
+  </label>
+  <button (click)="login()">Login</button>
+</div>

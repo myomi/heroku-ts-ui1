@@ -32,8 +32,15 @@ export class AuthService {
     this._expiresAt = 0;
   }
 
-  public login(): void {
-    this.auth0.authorize();
+  public login(email: string, password: string): void {
+    this.auth0.login({
+      email,
+      password,
+      realm: "Username-Password-Authentication"
+    }, (error) => {
+      // login error
+      debugger;
+    });
   }
 
   public logout(): void {
