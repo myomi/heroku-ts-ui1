@@ -10,4 +10,11 @@ export class HomeComponent implements OnInit {
   constructor(private auth: AuthService) {}
 
   ngOnInit() {}
+
+  /**
+   * IDトークンを検証
+   */
+  verifyIdToken() {
+    this.auth.verifyIdToken();
+  }
 }

@@ -4,4 +4,9 @@
       Log Out
     </button>
   </div>
+  <ul>
+    <li>ID Token: {{auth.idToken}}</li>
+    <li>Access Token: {{auth.accessToken}}</li>
+  </ul>
+  <button (click)="verifyIdToken()">IDトークンを検証する</button>
 </nav>

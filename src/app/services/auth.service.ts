@@ -2,6 +2,11 @@ import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { AUTH_CONFIG } from "./auth0-variables";
 import * as auth0 from "auth0-js";
+import * as jwt_decode from "jwt-decode";
+import { HttpClient } from "@angular/common/http";
+import { map } from "rxjs/operators";
+import { Observable } from "rxjs";
+import IdTokenVerifier from "idtoken-verifier";
 
 @Injectable({
   providedIn: "root"
@@ -26,21 +31,24 @@ export class AuthService {
     return this._idToken;
   }
 
-  constructor(public router: Router) {
+  constructor(private router: Router, private http: HttpClient) {
     this._idToken = "";
     this._accessToken = "";
     this._expiresAt = 0;
   }
 
   public login(email: string, password: string): void {
-    this.auth0.login({
-      email,
-      password,
-      realm: "Username-Password-Authentication"
-    }, (error) => {
-      // login error
-      debugger;
-    });
+    this.auth0.login(
+      {
+        email,
+        password,
+        realm: "Username-Password-Authentication"
+      },
+      error => {
+        // login error
+        debugger;
+      }
+    );
   }
 
   public logout(): void {
@@ -82,8 +90,23 @@ export class AuthService {
 
   public isAuthenticated(): boolean {
     // Check whether the current time is past the
-    // access token's expiry 
+    // access token's expiry
     return this._accessToken && Date.now() < this._expiresAt;
+  }
+
+  public verifyIdToken(): void {
+    const verifier = new IdTokenVerifier({
+      issuer: `https://${AUTH_CONFIG.domain}/`,
+      audience: AUTH_CONFIG.clientID
+    });
+    const decoded = verifier.decode(this.idToken);
+    verifier.verify(this.idToken, decoded.payload.nonce, (error, payload) => {
+      if (error) {
+        // 不正なIDトークン
+      } else {
+        // ここで payload の内容を検証する
+      }
+    });
   }
 
   private localLogin(authResult: auth0.Auth0DecodedHash): void {
@@ -93,4 +116,20 @@ export class AuthService {
     this._idToken = authResult.idToken;
     this._expiresAt = expiresAt;
   }
+}
+
+/**
+ * https://tools.ietf.org/html/rfc7517#section-4
+ */
+interface JWKS {
+  keys: {
+    kty: string;
+    alg: string;
+    use: string;
+    kid: string;
+    n: string;
+    e: string;
+    x5c: string[];
+    x5t: string;
+  }[];
 }
