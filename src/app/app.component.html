@@ -1,5 +1,20 @@
-<button routerLink="/login">Login</button>
-<button routerLink="/callback">Callback</button>
-<button routerLink="/home">Home</button>
+<nav>
+  <div>
+    <a href="#">Auth0 - Angular</a>
+    <button routerLink="/">
+      Home
+    </button>
 
-<router-outlet></router-outlet>
+    <button *ngIf="!auth.isAuthenticated()" (click)="auth.login()">
+      Log In
+    </button>
+
+    <button *ngIf="auth.isAuthenticated()" (click)="auth.logout()">
+      Log Out
+    </button>
+  </div>
+</nav>
+
+<main role="main">
+  <router-outlet></router-outlet>
+</main>
